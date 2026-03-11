@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('copies', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('book_id')->constrained();
+        $table->string('reference_code')->unique();
+        $table->enum('status', ['disponible', 'emprunte', 'degrade', 'perdu'])->default('disponible');
+        $table->text('damage_details')->nullable();
             $table->timestamps();
         });
     }
