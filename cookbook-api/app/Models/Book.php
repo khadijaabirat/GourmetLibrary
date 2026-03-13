@@ -6,5 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
-    //
+protected $fillable = [
+    'category_id',
+    'title',
+    'slug',
+    'author',
+    'description'
+];
+public function category(){
+    return $this->belongsTo(Category::class);
 }
+public function copies(){
+    return $this->hasMany(Copy::class);
+}
+}
+
