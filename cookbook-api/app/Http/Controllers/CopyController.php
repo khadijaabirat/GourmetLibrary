@@ -51,24 +51,8 @@ class CopyController extends Controller
      */
     public function update(Request $request, string $id)
     {
-         if ($request->user()->role !== 'admin') {
-            return response()->json(['message' => 'Accès refusé.'], 403);
-        }
-
-        $copy = Copy::findOrFail($id);
-
-        $request->validate([
-            'status' => 'required|in:disponible,emprunte,degrade,perdu',
-            'damage_details' => 'nullable|string'
-        ]);
-
-        $copy->update([
-            'status' => $request->status,
-             'damage_details' => $request->status === 'degrade' ? $request->damage_details : null,
-        ]);
-
-        return response()->json(['message' => 'Statut mis à jour', 'copy' => $copy], 200);
-    }
+ //
+ }
 
     /**
      * Remove the specified resource from storage.
@@ -93,5 +77,26 @@ class CopyController extends Controller
             'total_degrades' => $copies->count(),
             'copies' => $copies
         ], 200);
+    }
+
+    public function updateStatus(Request $request, $id){
+                if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Accès refusé.'], 403);
+        }
+
+        $copy = Copy::findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:disponible,emprunte,degrade,perdu',
+            'damage_details' => 'nullable|string'
+        ]);
+
+        $copy->update([
+            'status' => $request->status,
+             'damage_details' => $request->status === 'degrade' ? $request->damage_details : null,
+        ]);
+
+        return response()->json(['message' => 'Statut mis à jour', 'copy' => $copy], 200);
+
     }
 }
