@@ -101,11 +101,18 @@ class BookController extends Controller
         return response()->json($books, 200);
     }
 
-    public function getNewArrivals()
+
+    public function getNewArrivals(Request $request)
     {
-        $books = Book::with('category')->latest()->take(5)->get();
-        return response()->json($books, 200);
+        $query = Book::with('category')->latest();
+
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        return response()->json($query->take(5)->get(), 200);
     }
+
 
     public function showBySlug($category_slug, $book_slug)
     {

@@ -18,6 +18,7 @@ class StatsController extends Controller
         return response()->json($books, 200);
     }
 
+
     public function globalStats(Request $request)
     {
         if ($request->user()->role !== 'admin') {

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\Copy;
 use App\Models\Book;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Notifications\BookDegradedNotification;
+use Illuminate\Support\Facades\Notification;
 
 class CopyController extends Controller
 {
@@ -96,6 +99,10 @@ class CopyController extends Controller
              'damage_details' => $request->status === 'degrade' ? $request->damage_details : null,
         ]);
 
+        if ($request->status === 'degrade') {
+             $admins = User::where('role', 'admin')->get();
+            Notification::send($admins, new BookDegradedNotification($copy));
+        }
         return response()->json(['message' => 'Statut mis à jour', 'copy' => $copy], 200);
 
     }
