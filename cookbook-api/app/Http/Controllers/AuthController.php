@@ -1,45 +1,46 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
-     public function login(Request $request)
-    {
-         $request->validate([
+    public function login(Request $request)
+{
+    try {
+        $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-         if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-                'message' => 'Les identifiants sont incorrects.'
-            ], 401);
-        }
 
-         $user = User::where('email', $request->email)->firstOrFail();
+        $user  = User::where('email', $request->email)->firstOrFail();
+          if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json([
+            'message' => 'Les identifiants sont incorrects.'
+        ], 401);
+    }
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Connexion réussie',
-            'user' => $user,
+            'message'      => 'Connexion réussie',
+            'user'         => $user,
             'access_token' => $token,
-            'token_type' => 'Bearer',
+            'token_type'   => 'Bearer',
         ]);
-    }
-
-
-
-
-
-     public function logout(Request $request)
-    {
-         $request->user()->currentAccessToken()->delete();
+    } catch (\Exception $e) {
         return response()->json([
-            'message' => 'Déconnexion réussie'
-        ]);
+            'message' => 'Erreur serveur',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Déconnexion réussie']);
     }
 }
