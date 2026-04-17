@@ -4,6 +4,7 @@ namespace Illuminate\Contracts\Http;
 
 interface Kernel
 {
+  
     /**
      * Bootstrap the application for HTTP requests.
      *
@@ -34,4 +35,6 @@ interface Kernel
      * @return \Illuminate\Contracts\Foundation\Application
      */
     public function getApplication();
+
+    
 }
